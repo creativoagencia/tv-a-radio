@@ -69,6 +69,7 @@ import com.app.yoursingleradio.Config;
 import com.app.yoursingleradio.R;
 import com.app.yoursingleradio.activities.MainActivity;
 import com.app.yoursingleradio.activities.TvActivity;
+import com.app.yoursingleradio.activities.TvMainActivity;
 import com.app.yoursingleradio.dialogs.DialogMain;
 import com.app.yoursingleradio.services.PlaybackStatus;
 import com.app.yoursingleradio.services.RadioManager;
@@ -426,8 +427,8 @@ public class FragmentRadio extends Fragment implements OnClickListener, Permissi
         layout_whatsapp = relativeLayout.findViewById(R.id.layout_whatsapp);
         layout_whatsapp.setOnClickListener(view -> whatsapp_link ());
 
-        layout_whatsapp = relativeLayout.findViewById(R.id.layout_chat);
-        layout_whatsapp.setOnClickListener(view -> chat_link ());
+        layout_tv = relativeLayout.findViewById(R.id.layout_tv);
+        layout_tv.setOnClickListener(view -> tv_link());
 
 
         img_volume_bar = relativeLayout.findViewById(R.id.img_volume);
@@ -453,6 +454,12 @@ public class FragmentRadio extends Fragment implements OnClickListener, Permissi
         equalizer.stopBars();
         updateButtons();
 
+    }
+
+    private void tv_link() {
+        stopService();
+        startActivity(new Intent(requireActivity(), TvMainActivity.class));
+        requireActivity().finish();
     }
 
 
@@ -525,11 +532,14 @@ public class FragmentRadio extends Fragment implements OnClickListener, Permissi
 
     private void website_link (){
 
-        getChildFragmentManager().beginTransaction()
+        DialogMain.newInstance()
+                .show(getActivity().getSupportFragmentManager(), DialogMain.TAG);
+       /* getChildFragmentManager().beginTransaction()
                 .replace(R.id.coordinator_container_menu, FragmentWeb.newInstance("http://www.dancehallbeat.com/"), FragmentWeb.TAG)
                 .commit();
         isMenu = false;
-        openMenu();
+        openMenu();*/
+
         /*try {
             Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://radiomitierra.com"));
             startActivity(intent);

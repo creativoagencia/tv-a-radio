@@ -196,25 +196,6 @@
                             />
                     </com.balysv.materialripple.MaterialRippleLayout>
 
-                    <com.balysv.materialripple.MaterialRippleLayout
-                        android:id="@+id/layout_chat"
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_gravity="center_vertical"
-                        android:layout_weight="1"
-                        app:mrl_rippleAlpha="0.2"
-                        app:mrl_rippleColor="@color/play_color_text"
-                        app:mrl_rippleHover="true"
-                        app:mrl_rippleOverlay="true">
-                        <ImageView
-                            android:id="@+id/btn_chat"
-                            android:layout_width="@dimen/size_img_medium"
-                            android:layout_height="match_parent"
-                            android:layout_gravity="center"
-                            android:src="@drawable/ic_tv"
-                            />
-                    </com.balysv.materialripple.MaterialRippleLayout>
-
 
                     <com.balysv.materialripple.MaterialRippleLayout
                         android:visibility="gone"
@@ -254,6 +235,25 @@
                             android:src="@drawable/ic_website_white_36dp"
                             />
                     </com.balysv.materialripple.MaterialRippleLayout>
+                    <com.balysv.materialripple.MaterialRippleLayout
+                        android:id="@+id/layout_tv"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center_vertical"
+                        android:layout_weight="1"
+                        app:mrl_rippleAlpha="0.2"
+                        app:mrl_rippleColor="@color/play_color_text"
+                        app:mrl_rippleHover="true"
+                        app:mrl_rippleOverlay="true">
+                        <ImageView
+                            android:id="@+id/btn_tv"
+                            android:layout_width="@dimen/size_img_medium"
+                            android:layout_height="match_parent"
+                            android:layout_gravity="center"
+                            android:src="@drawable/ic_tv"
+                            />
+                    </com.balysv.materialripple.MaterialRippleLayout>
+
 
                 </LinearLayout>
 

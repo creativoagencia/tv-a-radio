@@ -38,6 +38,7 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.app.yoursingleradio.Config;
 import com.app.yoursingleradio.R;
+import com.app.yoursingleradio.activities.MainActivity;
 import com.app.yoursingleradio.activities.TvMainActivity;
 import com.app.yoursingleradio.dialogs.DialogMain;
 import com.app.yoursingleradio.utilities.Log;
@@ -80,7 +81,7 @@ public class TvMainFragment extends Fragment {
     SharedPref sharedPref;
     Handler handler = new Handler();
     Tools tools;
-    MaterialRippleLayout mLayoutWeb, layout_facebook,layout_instagram,layout_website,layout_tv,layout_whatsapp, layout_chat;
+    MaterialRippleLayout layout_facebook,layout_instagram,layout_website,layout_radio,layout_whatsapp, layout_chat;
 
 
     private boolean isPlaying = false;
@@ -116,6 +117,8 @@ public class TvMainFragment extends Fragment {
 
         layout_whatsapp = view.findViewById(R.id.layout_whatsapp);
         layout_whatsapp.setOnClickListener(view1 -> whatsapp_link ());
+        layout_radio=view.findViewById(R.id.layout_radio);
+        layout_radio.setOnClickListener(view1 -> radio_link());
 
 
         fabPlayPause.setOnClickListener(view1 -> {
@@ -146,6 +149,11 @@ public class TvMainFragment extends Fragment {
             }
         });
         return view;
+    }
+
+    private void radio_link() {
+        startActivity(new Intent(requireActivity(), MainActivity.class));
+        requireActivity().finish();
     }
 
     private void fullScreen(){
