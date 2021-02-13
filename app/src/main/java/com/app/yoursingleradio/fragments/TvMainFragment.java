@@ -3,6 +3,7 @@ package com.app.yoursingleradio.fragments;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.ActivityNotFoundException;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -62,6 +63,8 @@ import com.warkiz.widget.OnSeekChangeListener;
 import com.warkiz.widget.SeekParams;
 
 import java.util.Random;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 
 import static android.content.Context.ALARM_SERVICE;
@@ -84,8 +87,11 @@ public class TvMainFragment extends Fragment {
     MaterialRippleLayout layout_facebook,layout_instagram,layout_website,layout_radio,layout_whatsapp, layout_chat;
 
 
+    private TimerTask timerTask;
+    private Timer timer;
     private boolean isPlaying = false;
     private boolean isFullScreen = false;
+    private long timeStamp = 0;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -148,6 +154,8 @@ public class TvMainFragment extends Fragment {
                 openTimeSelectDialog();
             }
         });
+
+
         return view;
     }
 
@@ -191,6 +199,14 @@ public class TvMainFragment extends Fragment {
         super.onStop();
         if(simpleExoPlayer!=null) {
             simpleExoPlayer.stop();
+        }
+        if(timer!=null && timerTask!=null) {
+            timerTask.cancel();
+            timer.purge();
+            timer.cancel();
+            timer=null;
+            timerTask=null;
+            sharedPref.setSleepTime(false, 0,0);
         }
     }
 
@@ -286,12 +302,14 @@ public class TvMainFragment extends Fragment {
         builder.setPositiveButton(getString(R.string.stop), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                Intent i = new Intent(getActivity(), SleepTimeReceiver.class);
-                PendingIntent pendingIntent = PendingIntent.getBroadcast(getActivity(), sharedPref.getSleepID(), i, PendingIntent.FLAG_ONE_SHOT);
-                AlarmManager alarmManager = (AlarmManager) getActivity().getSystemService(ALARM_SERVICE);
-                pendingIntent.cancel();
-                alarmManager.cancel(pendingIntent);
-                sharedPref.setSleepTime(false, 0, 0);
+                if(timer!=null && timerTask!=null){
+                    timerTask.cancel();
+                    timer.purge();
+                    timer.cancel();
+                    timer=null;
+                    timerTask=null;
+                    sharedPref.setSleepTime(false, 0,0);
+                }
             }
         });
 
@@ -300,7 +318,7 @@ public class TvMainFragment extends Fragment {
         builder.show();
     }
     private void updateTimer(final TextView textView, long time) {
-        long timeleft = time - System.currentTimeMillis();
+        long timeleft = (timeStamp+time)-System.currentTimeMillis();
         if (timeleft > 0) {
             String hms = String.format("%02d:%02d:%02d", TimeUnit.MILLISECONDS.toHours(timeleft),
                     TimeUnit.MILLISECONDS.toMinutes(timeleft) % TimeUnit.HOURS.toMinutes(1),
@@ -374,12 +392,39 @@ public class TvMainFragment extends Fragment {
                 }
 
                 String totalTime = hours + ":" + minute;
-                long total_timer = tools.convertToMilliSeconds(totalTime) + System.currentTimeMillis();
+                long total_timer = tools.convertToMilliSeconds(totalTime);// + System.currentTimeMillis();
 
+                Log.e("Total", totalTime+"");
+                Log.e("Total", total_timer+"");
                 Random random = new Random();
+                int id = random.nextInt(100);
+                timer = new Timer();
+                timerTask = new TimerTask() {
+                    @Override
+                    public void run() {
+                        getActivity().runOnUiThread(new TimerTask() {
+                            @Override
+                            public void run() {
+                                Log.e("run","llego");
+                                timerTask.cancel();
+                                timer.purge();
+                                timer.cancel();
+                                timer=null;
+                                timerTask=null;
+                                pause();
+                                sharedPref.setSleepTime(false, 0,0);
+                            }
+                        });
+                    }
+                };
+                timeStamp = System.currentTimeMillis();
+                sharedPref.setSleepTime(true, total_timer, id);
+                timer.schedule(timerTask, total_timer);
+                /*Random random = new Random();
                 int id = random.nextInt(100);
 
                 sharedPref.setSleepTime(true, total_timer, id);
+
 
                 Intent intent = new Intent(getActivity(), SleepTimeReceiver.class);
                 PendingIntent pendingIntent = PendingIntent.getBroadcast(getActivity(), id, intent, PendingIntent.FLAG_ONE_SHOT);
@@ -388,7 +433,7 @@ public class TvMainFragment extends Fragment {
                     alarmManager.setExact(AlarmManager.RTC_WAKEUP, total_timer, pendingIntent);
                 } else {
                     alarmManager.set(AlarmManager.RTC_WAKEUP, total_timer, pendingIntent);
-                }
+                }*/
             }
         });
         alt_bld.setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
